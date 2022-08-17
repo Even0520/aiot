@@ -1,11 +1,4 @@
-<!DOCTYPE html><html><head><meta charset='utf-8'><meta http-equiv='Access-Control-Allow-Origin' content='*'><meta http-equiv='Access-Control-Allow-Credentials' content='true'><script src='https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script><script src='https://fustyles.github.io/webduino/SpBlocklyJS/GameElements_20190131/gameelements.js'></script><script src='https://fustyles.github.io/webduino/SpBlocklyJS/MQTT_20220324/mqtt.min.js'></script></head><body><script>const delay=(seconds)=>{return new Promise((resolve)=>{setTimeout(resolve,seconds*1000);});};const main=async()=>{var _E4_BB_A3_E7_A2_BC;
-
-// 描述此函式...
-function _E7_99_BC_E9_80_81_E7_B4_85_E5_A4_96_E7_B7_9A(_E4_BB_A3_E7_A2_BC) {
-}
-
-
-head_add_viewport(1,1,2,"yes");
+<!DOCTYPE html><html><head><meta charset='utf-8'><meta http-equiv='Access-Control-Allow-Origin' content='*'><meta http-equiv='Access-Control-Allow-Credentials' content='true'><script src='https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script><script src='https://fustyles.github.io/webduino/SpBlocklyJS/GameElements_20190131/gameelements.js'></script><script src='https://fustyles.github.io/webduino/SpBlocklyJS/MQTT_20220324/mqtt.min.js'></script></head><body><script>const delay=(seconds)=>{return new Promise((resolve)=>{setTimeout(resolve,seconds*1000);});};const main=async()=>{head_add_viewport(1.2,1,2,"yes");
 const clientId = "mqtt_" + Math.random().toString(16).substr(2, 8);
 const options = {
 	username: '',
@@ -23,14 +16,23 @@ var mqtt_client = mqtt.connect('wss://broker.emqx.io:8084/mqtt',options);
 mqtt_client.on("connect", ()=>{
 	console.log("connected");
   mqtt_client.subscribe('fsm/temperature');
+  mqtt_client.subscribe('fsm/ humidity');
 	mqtt_client.on("message", async function (topic, payload) {
   if (topic=='fsm/temperature') {
+    span_set('t',"innerHTML",(payload));
+  }
+  if (topic=='fsm/ humidity') {
+    span_set('h',"innerHTML",(payload));
   }
    })
   }
 )
 
+span_create('t',205,400,40,'',999);
+span_create('h',105,400,40,'',999);
 span_create('0',105,30,40,'智慧風扇',999);
+span_create('1',205,350,30,'溫度',999);
+span_create('2',105,350,30,'濕度',999);
 button_create('1',70,40,100,100,1,null,'開關',24,999,true);
 button_create('2',70,40,100,170,1,null,'模式',24,999,true);
 button_create('3',70,40,100,240,1,null,'擺頭',24,999,true);
@@ -66,4 +68,7 @@ async function gamebutton_7_onclick (event) {
   mqtt_client.publish('fsm/ir', String('5'));
 };
 document.getElementById("gamebutton_7").addEventListener("click", gamebutton_7_onclick, true);
+setInterval(async function(){
+  mqtt_client.publish('fsm/ir', String('8'));
+},30000);
 };main();</script></body></html>
