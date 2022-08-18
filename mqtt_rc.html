@@ -16,30 +16,30 @@ var mqtt_client = mqtt.connect('wss://broker.emqx.io:8084/mqtt',options);
 mqtt_client.on("connect", ()=>{
 	console.log("connected");
   mqtt_client.subscribe('fsm/temperature');
-  mqtt_client.subscribe('fsm/ humidity');
+  mqtt_client.subscribe('fsm/humidity');
 	mqtt_client.on("message", async function (topic, payload) {
   if (topic=='fsm/temperature') {
-    span_set('t',"innerHTML",(payload));
+    span_set('t',"innerHTML",(fontText(6,'#ff0000','Arial',(payload))));
   }
-  if (topic=='fsm/ humidity') {
-    span_set('h',"innerHTML",(payload));
+  if (topic=='fsm/humidity') {
+    span_set('h',"innerHTML",(fontText(6,'#3333ff','Arial',(payload))));
   }
    })
   }
 )
 
 span_create('t',205,400,40,'',999);
+span_create('1',205,370,20,'溫度(°C)',999);
 span_create('h',105,400,40,'',999);
-span_create('0',105,30,40,'智慧風扇',999);
-span_create('1',205,350,30,'溫度',999);
-span_create('2',105,350,30,'濕度',999);
-button_create('1',70,40,100,100,1,null,'開關',24,999,true);
-button_create('2',70,40,100,170,1,null,'模式',24,999,true);
-button_create('3',70,40,100,240,1,null,'擺頭',24,999,true);
-button_create('4',70,40,200,100,1,null,'燈光',24,999,true);
-button_create('5',70,40,200,240,1,null,'風量+',24,999,true);
-button_create('6',70,40,200,310,1,null,'風量-',24,999,true);
-button_create('7',70,40,200,170,1,null,'定時',24,999,true);
+span_create('2',105,370,20,'濕度(%)',999);
+span_create('0',123,30,40,'智慧風扇',999);
+button_create('1',100,40,100,100,1,null,'開關',24,999,true);
+button_create('2',100,40,100,170,1,null,'模式',24,999,true);
+button_create('3',100,40,100,240,1,null,'擺頭',24,999,true);
+button_create('4',100,40,210,100,1,null,'燈光',24,999,true);
+button_create('5',100,40,210,240,1,null,'風量+',24,999,true);
+button_create('6',100,40,210,310,1,null,'風量-',24,999,true);
+button_create('7',100,40,210,170,1,null,'定時',24,999,true);
 async function gamebutton_1_onclick (event) {
   mqtt_client.publish('fsm/ir', String('1'));
 };
@@ -70,5 +70,5 @@ async function gamebutton_7_onclick (event) {
 document.getElementById("gamebutton_7").addEventListener("click", gamebutton_7_onclick, true);
 setInterval(async function(){
   mqtt_client.publish('fsm/ir', String('8'));
-},30000);
+},10000);
 };main();</script></body></html>
